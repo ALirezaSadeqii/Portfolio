@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { useFrame } from '@react-three/fiber';
 import { Group, Mesh, MeshStandardMaterial, Vector3 } from 'three';
 import FloatingModel from '@/components/FloatingModel';
+import Link from 'next/link';
 
 function Scene() {
   const groupRef = useRef<Group>(null);
@@ -147,8 +148,8 @@ export default function ProjectsScene() {
             <Stars
               radius={100}
               depth={50}
-              count={3000}
-              factor={4}
+              count={5000}
+              factor={5}
               fade
               speed={1}
             />
@@ -164,6 +165,9 @@ export default function ProjectsScene() {
           </Suspense>
         </Canvas>
       </div>
+
+      {/* Background diagonal gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-black via-black/50 to-transparent z-10 pointer-events-none"></div>
       
       {/* CSS-based floating tech symbols */}
       {techSymbols.map((symbol, index) => (
@@ -197,138 +201,132 @@ export default function ProjectsScene() {
         </motion.div>
       ))}
       
-      {/* Large circular rings using CSS */}
-      <div className="absolute inset-0 pointer-events-none z-10">
-        <motion.div 
-          className="absolute rounded-full border-2 border-accent/30"
-          style={{ 
-            width: '600px', 
-            height: '600px', 
-            left: 'calc(50% - 300px)',
-            top: 'calc(50% - 300px)',
-          }}
-          initial={{ opacity: 0, scale: 0.8 }}
+      {/* Glowing lines */}
+      <div className="absolute inset-0 z-20 pointer-events-none overflow-hidden">
+        <motion.div
+          className="absolute h-px w-full bg-gradient-to-r from-transparent via-accent to-transparent opacity-30"
+          style={{ top: '30%' }}
           animate={{ 
-            opacity: 0.5, 
-            scale: 1,
-            rotate: 360,
-            transition: {
-              rotate: {
-                repeat: Infinity,
-                duration: 20,
-                ease: "linear",
-              },
-              opacity: { duration: 1.5 }
-            }
+            translateX: ['-100%', '100%'],
+            opacity: [0, 0.8, 0],
+          }}
+          transition={{ 
+            duration: 8, 
+            repeat: Infinity, 
+            ease: "linear"
           }}
         />
-        
-        <motion.div 
-          className="absolute rounded-full border border-accent-secondary/20"
-          style={{ 
-            width: '800px', 
-            height: '800px', 
-            left: 'calc(50% - 400px)',
-            top: 'calc(50% - 400px)',
-          }}
-          initial={{ opacity: 0, scale: 0.8 }}
+        <motion.div
+          className="absolute h-px w-full bg-gradient-to-r from-transparent via-accent-secondary to-transparent opacity-20"
+          style={{ top: '65%' }}
           animate={{ 
-            opacity: 0.3, 
-            scale: 1,
-            rotate: -360,
-            transition: {
-              rotate: {
-                repeat: Infinity,
-                duration: 25,
-                ease: "linear",
-              },
-              opacity: { duration: 1.5 }
-            }
+            translateX: ['100%', '-100%'],
+            opacity: [0, 0.6, 0],
+          }}
+          transition={{ 
+            duration: 10, 
+            repeat: Infinity, 
+            ease: "linear",
+            delay: 2
           }}
         />
       </div>
       
-      {/* Light beams using CSS */}
-      <motion.div 
-        className="absolute h-[300px] w-[3px] bg-accent/30 blur-[2px] rounded-full z-10 pointer-events-none"
-        style={{ 
-          left: '30%', 
-          top: '20%',
-          transformOrigin: 'center bottom',
-          transform: 'rotate(25deg)',
-        }}
-        initial={{ opacity: 0, scaleY: 0.5 }}
-        animate={{ 
-          opacity: [0.3, 0.7, 0.3], 
-          scaleY: [1, 1.2, 1],
-          transition: {
-            repeat: Infinity,
-            duration: 3,
-            ease: "easeInOut",
-          }
-        }}
-      />
-      
-      <motion.div 
-        className="absolute h-[400px] w-[3px] bg-accent-tertiary/30 blur-[2px] rounded-full z-10 pointer-events-none"
-        style={{ 
-          right: '25%', 
-          bottom: '10%',
-          transformOrigin: 'center bottom',
-          transform: 'rotate(-35deg)',
-        }}
-        initial={{ opacity: 0, scaleY: 0.5 }}
-        animate={{ 
-          opacity: [0.3, 0.6, 0.3], 
-          scaleY: [1, 1.1, 1],
-          transition: {
-            repeat: Infinity,
-            duration: 4,
-            ease: "easeInOut",
-            delay: 0.5,
-          }
-        }}
-      />
-
-      {/* Overlay with content */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black via-black/40 to-black z-30">
-        <div className="container mx-auto h-full flex flex-col justify-center items-center px-6 text-center">
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-5xl md:text-7xl font-bold"
-          >
-            <span className="multicolor-gradient glow-text">Alireza Sadeghi</span>
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-xl md:text-2xl text-white/70 max-w-2xl mt-6"
-          >
-            Computer Engineering Student | Front-End Developer
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="mt-12"
-          >
-            <a
-              href="#projects"
-              className="button-glow bg-accent hover:bg-accent/90 text-black font-medium py-4 px-10 rounded-full flex items-center gap-2 transition-colors animated-border"
+      {/* Content container */}
+      <div className="absolute inset-0 z-30 flex items-center">
+        <div className="container mx-auto px-6">
+          <div className="max-w-3xl">
+            {/* Animated badge */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="inline-block mb-6 bg-accent/10 backdrop-blur-sm border border-accent/20 py-1 px-4 rounded-full"
             >
-              Explore Projects
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M7 13L12 18L17 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </a>
-          </motion.div>
+              <span className="text-accent text-sm font-medium">Frontend Developer & Computer Engineering Student</span>
+            </motion.div>
+            
+            {/* Main heading */}
+            <motion.h1
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, delay: 0.2 }}
+              className="text-5xl md:text-7xl font-bold mb-6"
+            >
+              <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+                <span>Hi, I'm</span>
+                <span className="multicolor-gradient glow-text">Alireza Sadeghi</span>
+              </div>
+            </motion.h1>
+            
+            {/* Subheading */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+            >
+              <p className="text-xl md:text-2xl text-white/70 max-w-2xl mb-8">
+                I build modern web experiences with a focus on responsive design, 
+                interactive animations, and clean code.
+              </p>
+              
+              {/* Call to action buttons */}
+              <div className="flex flex-wrap gap-4">
+                <Link 
+                  href="#projects"
+                  className="button-glow bg-accent hover:bg-accent/90 text-black font-medium py-3 px-8 rounded-lg flex items-center gap-2 transition-all duration-300 group"
+                >
+                  View Projects
+                  <motion.svg 
+                    width="20" 
+                    height="20" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    xmlns="http://www.w3.org/2000/svg"
+                    initial={{ x: 0 }}
+                    animate={{ x: [0, 5, 0] }}
+                    transition={{ 
+                      duration: 1.5, 
+                      repeat: Infinity, 
+                      repeatType: "loop",
+                      ease: "easeInOut",
+                      repeatDelay: 1
+                    }}
+                  >
+                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </motion.svg>
+                </Link>
+                
+                <Link 
+                  href="#contact"
+                  className="bg-transparent border border-white/20 text-white hover:bg-white/10 font-medium py-3 px-8 rounded-lg transition-colors flex items-center gap-2"
+                >
+                  Contact Me
+                </Link>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </div>
+      
+      {/* Scroll indicator */}
+      <motion.div
+        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-30"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.2, duration: 0.8 }}
+      >
+        <motion.div
+          animate={{ y: [0, 8, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+          className="flex flex-col items-center"
+        >
+          <span className="text-white/50 text-sm mb-2">Scroll Down</span>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7 13L12 18L17 13" stroke="white" strokeOpacity="0.5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </motion.div>
+      </motion.div>
     </section>
   );
 } 

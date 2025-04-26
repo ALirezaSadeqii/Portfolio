@@ -275,7 +275,7 @@ export default function ExperienceSection() {
                   viewport={{ once: true }}
                 >
                   <span className="text-accent">•</span>
-                  <span>Created responsive parallax scrolling websites with advanced CSS animations</span>
+                  <span>Created responsive parallax scrolling websites with React Spring library</span>
                 </motion.li>
                 <motion.li 
                   className="flex items-start gap-3"
