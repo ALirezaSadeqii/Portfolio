@@ -10,7 +10,7 @@ const projects = [
     title: 'Scroll-Parallax-Website',
     description: 'A website featuring smooth parallax scrolling effects, demonstrating advanced CSS animations and responsive design principles.',
     tags: ['JavaScript', 'HTML', 'CSS', 'Parallax'],
-    imageUrl: 'https://source.unsplash.com/random/600x400/?parallax',
+    imageUrl: '/images/projects/parallax.jpg',
     githubUrl: 'https://github.com/ALirezaSadeqii/Scroll-Parallax-Website',
   },
   {
@@ -18,7 +18,7 @@ const projects = [
     title: 'Weather App',
     description: 'Interactive weather application that provides real-time forecasts using geolocation. Allows users to check weather conditions for any location.',
     tags: ['JavaScript', 'API', 'CSS', 'Responsive'],
-    imageUrl: 'https://source.unsplash.com/random/600x400/?weather',
+    imageUrl: '/images/projects/weather.jpg',
     githubUrl: 'https://github.com/ALirezaSadeqii/weatherApp',
   },
   {
@@ -26,7 +26,7 @@ const projects = [
     title: 'Three.js Project',
     description: 'Exploration of 3D graphics programming using Three.js, creating interactive 3D scenes and animations for web applications.',
     tags: ['Three.js', 'JavaScript', '3D', 'WebGL'],
-    imageUrl: 'https://source.unsplash.com/random/600x400/?3d',
+    imageUrl: '/images/projects/threejs.jpg',
     githubUrl: 'https://github.com/ALirezaSadeqii/Threejs',
   },
   {
@@ -34,7 +34,7 @@ const projects = [
     title: 'React Base Weather App',
     description: 'Weather application built with React, demonstrating component-based architecture and API integration in a React environment.',
     tags: ['React', 'API', 'JavaScript', 'Hooks'],
-    imageUrl: 'https://source.unsplash.com/random/600x400/?react',
+    imageUrl: '/images/projects/react.jpg',
     githubUrl: 'https://github.com/ALirezaSadeqii/reactBaseWeatherApp',
   },
   {
@@ -42,7 +42,7 @@ const projects = [
     title: 'Movies Project',
     description: 'Interactive movie database application showcasing details about films, actors, and ratings. Features filtering and search functionality.',
     tags: ['JavaScript', 'API', 'CSS', 'Responsive'],
-    imageUrl: 'https://source.unsplash.com/random/600x400/?movies',
+    imageUrl: '/images/projects/movies.jpg',
     githubUrl: 'https://github.com/ALirezaSadeqii/movies',
   },
   {
@@ -50,7 +50,7 @@ const projects = [
     title: 'Album Project',
     description: 'Digital album application for organizing and displaying photo collections with smooth transitions and filtering options.',
     tags: ['JavaScript', 'CSS', 'Gallery', 'Responsive'],
-    imageUrl: 'https://source.unsplash.com/random/600x400/?album',
+    imageUrl: '/images/projects/album.jpg',
     githubUrl: 'https://github.com/ALirezaSadeqii/album',
   },
 ];

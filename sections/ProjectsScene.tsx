@@ -134,7 +134,7 @@ const techSymbols = [
 
 export default function ProjectsScene() {
   return (
-    <section className="h-screen w-full relative noise-bg overflow-hidden">
+    <section id="home" className="h-screen w-full relative noise-bg overflow-hidden">
       {/* 3D Canvas */}
       <div className="absolute inset-0">
         <Canvas 
@@ -308,7 +308,7 @@ export default function ProjectsScene() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-xl md:text-2xl text-white/70 max-w-2xl mt-6"
           >
-            Front-End Developer specializing in React, JavaScript, and modern web technologies
+            Computer Engineering Student | Front-End Developer
           </motion.p>
 
           <motion.div
