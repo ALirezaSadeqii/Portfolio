@@ -1,332 +1,566 @@
 'use client';
-import { Canvas } from '@react-three/fiber';
-import { Suspense, useState, useRef } from 'react';
-import { Environment, Float, OrbitControls, PerspectiveCamera, Stars, Text, useGLTF } from '@react-three/drei';
-import { motion } from 'framer-motion';
-import { useFrame } from '@react-three/fiber';
-import { Group, Mesh, MeshStandardMaterial, Vector3 } from 'three';
-import FloatingModel from '@/components/FloatingModel';
+import { useRef, useState, useEffect } from 'react';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 
-function Scene() {
-  const groupRef = useRef<Group>(null);
-
-  useFrame(({ clock }) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y = Math.sin(clock.getElapsedTime() * 0.1) * 0.2;
-    }
-  });
-
-  // Positions for orbit models in a more interesting formation
-  const orbitPositions = [
-    [-4, 0, 0],
-    [4, 1, -2],
-    [0, -3, 2],
-    [3, 3, -3],
-    [-3, 2, 3],
-    [2, -2, -4],
-    [-2, -4, -1],
-    [1, 4, 1]
-  ];
-
-  return (
-    <group ref={groupRef}>
-      {/* Center object - interactive glowing sphere */}
-      <Float
-        speed={3}
-        rotationIntensity={0.2}
-        floatIntensity={0.3}
-        position={[0, 0, 0]}
-      >
-        <mesh>
-          <sphereGeometry args={[1.2, 64, 64]} />
-          <meshStandardMaterial 
-            color="#000000" 
-            emissive="#00e5ff" 
-            emissiveIntensity={1} 
-            metalness={0.9} 
-            roughness={0.1} 
-            toneMapped={false}
-          />
-        </mesh>
-        
-        {/* Outer glow */}
-        <mesh>
-          <sphereGeometry args={[1.3, 32, 32]} />
-          <meshBasicMaterial 
-            color="#00e5ff" 
-            transparent={true} 
-            opacity={0.1} 
-            toneMapped={false}
-          />
-        </mesh>
-      </Float>
-
-      {/* 3D floating text */}
-      <Float
-        position={[0, 0.5, -3]}
-        rotation={[0, Math.PI, 0]}
-        speed={2}
-        rotationIntensity={0.2}
-        floatIntensity={0.2}
-      >
-        <Text
-          fontSize={0.5}
-          color="#ffffff"
-          anchorX="center"
-          anchorY="middle"
-        >
-          PORTFOLIO
-        </Text>
-      </Float>
-
-      {/* Orbit models with various colors and properties */}
-      {orbitPositions.map((position, index) => (
-        <FloatingModel 
-          key={index}
-          position={position as [number, number, number]} 
-          scale={0.5 + Math.random() * 0.4}
-          distortSpeed={1 + Math.random() * 2}
-          distortIntensity={0.2 + Math.random() * 0.3}
-          color1={index % 3 === 0 ? '#00e5ff' : index % 3 === 1 ? '#9945ff' : '#ff3d81'}
-          color2={index % 3 === 1 ? '#00e5ff' : index % 3 === 2 ? '#9945ff' : '#ff3d81'}
-          color3={index % 3 === 2 ? '#00e5ff' : index % 3 === 0 ? '#9945ff' : '#ff3d81'}
-        />
-      ))}
-
-      {/* Additional small floating particles */}
-      {Array.from({ length: 20 }).map((_, i) => (
-        <Float
-          key={`particle-${i}`}
-          position={[
-            (Math.random() - 0.5) * 10,
-            (Math.random() - 0.5) * 10,
-            (Math.random() - 0.5) * 10
-          ]}
-          speed={3}
-          rotationIntensity={10}
-          floatIntensity={5}
-        >
-          <mesh scale={0.1 + Math.random() * 0.1}>
-            <sphereGeometry args={[1, 16, 16]} />
-            <meshBasicMaterial 
-              color={
-                i % 3 === 0 ? '#00e5ff' :
-                i % 3 === 1 ? '#9945ff' : '#ff3d81'
-              } 
-              transparent
-              opacity={0.7}
-              toneMapped={false}
-            />
-          </mesh>
-        </Float>
-      ))}
-    </group>
-  );
-}
-
-// Tech symbols config for CSS-based floating elements
-const techSymbols = [
-  { text: "</>", color: "#00e5ff", size: "text-4xl", left: "10%", top: "20%", animationDelay: "0s" },
-  { text: "{ }", color: "#9945ff", size: "text-5xl", right: "15%", top: "25%", animationDelay: "0.5s" },
-  { text: "JS", color: "#f0db4f", size: "text-3xl", left: "20%", bottom: "30%", animationDelay: "1s" },
-  { text: "⚛️", color: "#61dafb", size: "text-5xl", right: "20%", bottom: "20%", animationDelay: "1.5s" },
-];
-
-export default function ProjectsScene() {
-  return (
-    <section id="home" className="h-screen w-full relative noise-bg overflow-hidden">
-      {/* 3D Canvas */}
-      <div className="absolute inset-0">
-        <Canvas 
-          camera={{ position: [0, 0, 10], fov: 50 }}
-          gl={{ alpha: true, antialias: true }}
-          dpr={[1, 2]}
-        >
-          <Suspense fallback={null}>
-            <Scene />
-            <Stars
-              radius={100}
-              depth={50}
-              count={5000}
-              factor={5}
-              fade
-              speed={1}
-            />
-            <Environment preset="night" />
-            <OrbitControls 
-              enableZoom={false} 
-              enablePan={false}
-              autoRotate
-              autoRotateSpeed={0.5}
-              maxPolarAngle={Math.PI / 2}
-              minPolarAngle={Math.PI / 3}
-            />
-          </Suspense>
-        </Canvas>
-      </div>
-
-      {/* Background diagonal gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-black via-black/50 to-transparent z-10 pointer-events-none"></div>
+// WebGL particle system - much more efficient than full 3D scene
+const ParticleBackground = () => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    // Set canvas dimensions
+    const setCanvasDimensions = () => {
+      if (canvas && ctx) {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+    };
+    
+    setCanvasDimensions();
+    window.addEventListener('resize', setCanvasDimensions);
+    
+    // Create particles
+    const particlesArray: Particle[] = [];
+    const numberOfParticles = 200;
+    
+    class Particle {
+      x: number;
+      y: number;
+      size: number;
+      speedX: number;
+      speedY: number;
+      color: string;
       
-      {/* CSS-based floating tech symbols */}
-      {techSymbols.map((symbol, index) => (
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 5 + 1;
+        this.speedX = Math.random() * 1 - 0.5;
+        this.speedY = Math.random() * 1 - 0.5;
+        
+        // Use brand colors
+        const colors = ['#00e5ff', '#9945ff', '#ff3d81'];
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+      }
+      
+      update(mouseX: number, mouseY: number) {
+        // Basic movement
+        this.x += this.speedX;
+        this.y += this.speedY;
+        
+        // Mouse influence (subtle attraction)
+        const dx = mouseX - this.x;
+        const dy = mouseY - this.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance < 200) {
+          const angle = Math.atan2(dy, dx);
+          const force = (200 - distance) / 10000;
+          this.speedX += Math.cos(angle) * force;
+          this.speedY += Math.sin(angle) * force;
+        }
+        
+        // Boundary check
+        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+        
+        // Limit speed
+        const maxSpeed = 1;
+        const currentSpeed = Math.sqrt(this.speedX * this.speedX + this.speedY * this.speedY);
+        if (currentSpeed > maxSpeed) {
+          this.speedX = (this.speedX / currentSpeed) * maxSpeed;
+          this.speedY = (this.speedY / currentSpeed) * maxSpeed;
+        }
+      }
+      
+      draw(ctx: CanvasRenderingContext2D) {
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    
+    // Initialize particles
+    for (let i = 0; i < numberOfParticles; i++) {
+      particlesArray.push(new Particle());
+    }
+    
+    // Handle mouse movement
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({
+        x: e.clientX,
+        y: e.clientY
+      });
+    };
+    
+    window.addEventListener('mousemove', handleMouseMove);
+    
+    // Animation loop
+    let animationFrameId: number;
+    
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Draw and update particles
+      for (let i = 0; i < particlesArray.length; i++) {
+        particlesArray[i].update(mousePosition.x, mousePosition.y);
+        particlesArray[i].draw(ctx);
+      }
+      
+      // Connect close particles with lines
+      connectParticles(ctx, particlesArray);
+      
+      animationFrameId = requestAnimationFrame(animate);
+    };
+    
+    function connectParticles(ctx: CanvasRenderingContext2D, particles: Particle[]) {
+      for (let a = 0; a < particles.length; a++) {
+        for (let b = a; b < particles.length; b++) {
+          const dx = particles[a].x - particles[b].x;
+          const dy = particles[a].y - particles[b].y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance < 100) {
+            ctx.strokeStyle = `rgba(255, 255, 255, ${0.1 * (1 - distance / 100)})`;
+            ctx.lineWidth = 0.2;
+            ctx.beginPath();
+            ctx.moveTo(particles[a].x, particles[a].y);
+            ctx.lineTo(particles[b].x, particles[b].y);
+            ctx.stroke();
+          }
+        }
+      }
+    }
+    
+    animate();
+    
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      window.removeEventListener('resize', setCanvasDimensions);
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, []);
+  
+  return (
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 z-10"
+      style={{ background: 'transparent' }}
+    />
+  );
+};
+
+// Interactive cursor effect
+const CursorEffect = () => {
+  const [cursorPosition, setCursorPosition] = useState({ x: -100, y: -100 });
+  const [isClicking, setIsClicking] = useState(false);
+  
+  useEffect(() => {
+    const updateCursorPosition = (e: MouseEvent) => {
+      setCursorPosition({ x: e.clientX, y: e.clientY });
+    };
+    
+    const handleMouseDown = () => setIsClicking(true);
+    const handleMouseUp = () => setIsClicking(false);
+    
+    window.addEventListener('mousemove', updateCursorPosition);
+    window.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mouseup', handleMouseUp);
+    
+    return () => {
+      window.removeEventListener('mousemove', updateCursorPosition);
+      window.removeEventListener('mousedown', handleMouseDown);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, []);
+  
+  return (
+    <>
+      <motion.div
+        className="hidden md:block fixed w-8 h-8 rounded-full border-2 border-accent pointer-events-none z-50 mix-blend-difference"
+        animate={{
+          x: cursorPosition.x - 16,
+          y: cursorPosition.y - 16,
+          scale: isClicking ? 0.5 : 1,
+        }}
+        transition={{
+          type: 'spring',
+          stiffness: 500,
+          damping: 28,
+          mass: 0.5,
+        }}
+      />
+      <motion.div
+        className="hidden md:block fixed w-4 h-4 rounded-full bg-accent-secondary pointer-events-none z-50 mix-blend-difference"
+        animate={{
+          x: cursorPosition.x - 8,
+          y: cursorPosition.y - 8,
+          scale: isClicking ? 1.2 : 1,
+        }}
+        transition={{
+          type: 'spring',
+          stiffness: 700,
+          damping: 28,
+          mass: 0.3,
+        }}
+      />
+    </>
+  );
+};
+
+// Floating text animation for tech keywords
+const FloatingTechKeywords = () => {
+  const keywords = [
+    { text: "React", x: "10%", y: "20%", delay: 0 },
+    { text: "TypeScript", x: "85%", y: "25%", delay: 0.5 },
+    { text: "JavaScript", x: "20%", y: "75%", delay: 1.2 },
+    { text: "Next.js", x: "80%", y: "70%", delay: 0.3 },
+    { text: "TailwindCSS", x: "15%", y: "45%", delay: 0.8 },
+  ];
+  
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none z-20">
+      {keywords.map((keyword, index) => (
         <motion.div
           key={index}
-          className={`absolute ${symbol.size} font-bold z-20 select-none pointer-events-none`}
-          style={{
-            color: symbol.color,
-            left: symbol.left,
-            right: symbol.right,
-            top: symbol.top,
-            bottom: symbol.bottom,
-            textShadow: `0 0 15px ${symbol.color}`,
-          }}
-          initial={{ opacity: 0, y: 20 }}
+          className="absolute text-sm md:text-base font-mono text-white/30"
+          style={{ left: keyword.x, top: keyword.y }}
+          initial={{ opacity: 0 }}
           animate={{ 
-            opacity: 0.7, 
-            y: [0, -15, 0],
-            transition: {
-              y: {
-                repeat: Infinity,
-                duration: 3,
-                ease: "easeInOut",
-                delay: parseFloat(symbol.animationDelay),
-              },
-              opacity: { duration: 1.5 }
-            }
+            opacity: [0, 0.5, 0],
+            y: [0, -20, 0] 
+          }}
+          transition={{
+            duration: 6,
+            delay: keyword.delay,
+            repeat: Infinity,
+            repeatType: "loop",
+            ease: "easeInOut",
           }}
         >
-          {symbol.text}
+          {keyword.text}
         </motion.div>
       ))}
+    </div>
+  );
+};
+
+// Animated glow effect for accents
+const GlowingAccents = () => {
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden z-15">
+      <motion.div
+        className="absolute right-1/4 top-1/4 h-64 w-64 rounded-full"
+        style={{ 
+          background: 'radial-gradient(circle, rgba(0, 229, 255, 0.15) 0%, rgba(0, 229, 255, 0) 70%)',
+          filter: 'blur(40px)'
+        }}
+        animate={{ 
+          scale: [1, 1.2, 1],
+          opacity: [0.5, 0.8, 0.5]
+        }}
+        transition={{
+          duration: 8,
+          repeat: Infinity,
+          repeatType: "mirror"
+        }}
+      />
+      <motion.div
+        className="absolute left-1/4 bottom-1/4 h-80 w-80 rounded-full"
+        style={{ 
+          background: 'radial-gradient(circle, rgba(153, 69, 255, 0.15) 0%, rgba(153, 69, 255, 0) 70%)',
+          filter: 'blur(40px)'
+        }}
+        animate={{ 
+          scale: [1, 1.3, 1],
+          opacity: [0.5, 0.7, 0.5]
+        }}
+        transition={{
+          duration: 10,
+          delay: 2,
+          repeat: Infinity,
+          repeatType: "mirror"
+        }}
+      />
+    </div>
+  );
+};
+
+export default function ProjectsScene() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"]
+  });
+  
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const y = useTransform(scrollYProgress, [0, 0.5], [0, 100]);
+  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.9]);
+  
+  const [isLoaded, setIsLoaded] = useState(false);
+  
+  useEffect(() => {
+    // Simulate loading complete after a short delay
+    const timer = setTimeout(() => setIsLoaded(true), 500);
+    return () => clearTimeout(timer);
+  }, []);
+  
+  return (
+    <section id="home" className="h-screen w-full relative overflow-hidden bg-black" ref={containerRef}>
+      {/* Noise texture overlay */}
+      <div className="absolute inset-0 opacity-50 z-5 noise-bg pointer-events-none"></div>
       
-      {/* Glowing lines */}
-      <div className="absolute inset-0 z-20 pointer-events-none overflow-hidden">
-        <motion.div
-          className="absolute h-px w-full bg-gradient-to-r from-transparent via-accent to-transparent opacity-30"
-          style={{ top: '30%' }}
-          animate={{ 
-            translateX: ['-100%', '100%'],
-            opacity: [0, 0.8, 0],
-          }}
-          transition={{ 
-            duration: 8, 
-            repeat: Infinity, 
-            ease: "linear"
-          }}
-        />
-        <motion.div
-          className="absolute h-px w-full bg-gradient-to-r from-transparent via-accent-secondary to-transparent opacity-20"
-          style={{ top: '65%' }}
-          animate={{ 
-            translateX: ['100%', '-100%'],
-            opacity: [0, 0.6, 0],
-          }}
-          transition={{ 
-            duration: 10, 
-            repeat: Infinity, 
-            ease: "linear",
-            delay: 2
-          }}
-        />
-      </div>
+      {/* Performance-optimized background effects */}
+      {isLoaded && (
+        <>
+          <ParticleBackground />
+          <GlowingAccents />
+          <FloatingTechKeywords />
+          <CursorEffect />
+        </>
+      )}
       
-      {/* Content container */}
-      <div className="absolute inset-0 z-30 flex items-center">
+      {/* Content wrapper with scroll effects */}
+      <motion.div 
+        className="relative h-full flex items-center z-30"
+        style={{ opacity, y, scale }}
+      >
         <div className="container mx-auto px-6">
-          <div className="max-w-3xl">
-            {/* Animated badge */}
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="inline-block mb-6 bg-accent/10 backdrop-blur-sm border border-accent/20 py-1 px-4 rounded-full"
-            >
-              <span className="text-accent text-sm font-medium">Frontend Developer & Computer Engineering Student</span>
-            </motion.div>
-            
-            {/* Main heading */}
-            <motion.h1
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 0.2 }}
-              className="text-5xl md:text-7xl font-bold mb-6"
-            >
-              <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-                <span>Hi, I'm</span>
-                <span className="multicolor-gradient glow-text">Alireza Sadeghi</span>
-              </div>
-            </motion.h1>
-            
-            {/* Subheading */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-            >
-              <p className="text-xl md:text-2xl text-white/70 max-w-2xl mb-8">
-                I build modern web experiences with a focus on responsive design, 
-                interactive animations, and clean code.
-              </p>
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            {/* Text content column */}
+            <div className="space-y-8">
+              <motion.div 
+                className="space-y-2"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+              >
+                <div className="relative inline-block">
+                  <motion.div
+                    className="bg-gradient-to-r from-accent-tertiary via-accent to-accent-secondary py-2 px-5 rounded-lg text-sm font-mono backdrop-blur-md border border-white/10"
+                    initial={{ opacity: 0, width: 0 }}
+                    animate={{ opacity: 1, width: "auto" }}
+                    transition={{ duration: 0.8, delay: 0.2 }}
+                  >
+                    <motion.span
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3, delay: 0.8 }}
+                    >
+                      front-end developer
+                    </motion.span>
+                  </motion.div>
+                </div>
+              </motion.div>
               
-              {/* Call to action buttons */}
-              <div className="flex flex-wrap gap-4">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="space-y-4"
+              >
+                <h1 className="text-5xl md:text-7xl font-bold">
+                  <motion.span
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.4 }}
+                    className="block"
+                  >
+                    Alireza
+                  </motion.span>
+                  <motion.span
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.6 }}
+                    className="multicolor-gradient glow-text"
+                  >
+                    Sadeghi
+                  </motion.span>
+                </h1>
+                
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.8 }}
+                  className="text-xl text-white/70 max-w-lg"
+                >
+                  Computer Engineering Student & Creative Front-End Developer building innovative web experiences with cutting-edge technologies.
+                </motion.p>
+              </motion.div>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 1 }}
+                className="pt-4 flex flex-wrap gap-4"
+              >
                 <Link 
                   href="#projects"
-                  className="button-glow bg-accent hover:bg-accent/90 text-black font-medium py-3 px-8 rounded-lg flex items-center gap-2 transition-all duration-300 group"
+                  className="relative overflow-hidden group bg-gradient-to-r from-accent to-accent-secondary text-black font-medium py-3 px-8 rounded-lg flex items-center gap-2"
                 >
-                  View Projects
-                  <motion.svg 
-                    width="20" 
-                    height="20" 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    xmlns="http://www.w3.org/2000/svg"
-                    initial={{ x: 0 }}
-                    animate={{ x: [0, 5, 0] }}
+                  <motion.span
+                    animate={{ x: [0, 100, 0] }}
                     transition={{ 
-                      duration: 1.5, 
-                      repeat: Infinity, 
-                      repeatType: "loop",
-                      ease: "easeInOut",
-                      repeatDelay: 1
+                      duration: 5,
+                      repeat: Infinity,
+                      repeatType: "loop", 
+                      ease: "linear" 
                     }}
-                  >
-                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </motion.svg>
+                    className="absolute inset-0 w-full bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12"
+                  />
+                  <span className="relative z-10">Explore Projects</span>
+                  <svg className="w-5 h-5 relative z-10 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
                 </Link>
                 
                 <Link 
                   href="#contact"
-                  className="bg-transparent border border-white/20 text-white hover:bg-white/10 font-medium py-3 px-8 rounded-lg transition-colors flex items-center gap-2"
+                  className="border border-white/20 text-white hover:border-accent hover:text-accent font-medium py-3 px-8 rounded-lg transition-colors"
                 >
                   Contact Me
                 </Link>
+              </motion.div>
+              
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 1.2 }}
+                className="flex items-center gap-4 text-white/50"
+              >
+                <span className="h-px w-8 bg-white/30"></span>
+                <span className="text-sm">Scroll to discover</span>
+              </motion.div>
+            </div>
+            
+            {/* Hero image column with animated gradient border */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.5 }}
+              className="relative hidden md:block"
+            >
+              <div className="relative aspect-square max-w-md mx-auto">
+                {/* Animated gradient border effect */}
+                <div className="absolute inset-0 rounded-2xl overflow-hidden p-1">
+                  <div className="absolute inset-0 bg-gradient-to-r from-accent via-accent-secondary to-accent-tertiary rounded-2xl animate-spin-slow" />
+                  <div className="absolute inset-0.5 bg-black rounded-2xl backdrop-blur-xl" />
+                </div>
+                
+                {/* Profile image */}
+                <div className="absolute inset-2 rounded-xl overflow-hidden">
+                  <Image 
+                    src="/images/profile.jpg"
+                    alt="Alireza Sadeghi"
+                    fill
+                    className="object-cover"
+                    priority
+                  />
+                </div>
+                
+                {/* Tech stack badges */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 1 }}
+                  className="absolute -bottom-6 -right-6 bg-black/80 backdrop-blur-md border border-white/10 p-3 rounded-lg"
+                >
+                  <div className="flex gap-2">
+                    {['react', 'nextjs', 'typescript'].map((tech, i) => (
+                      <div 
+                        key={tech}
+                        className="w-7 h-7 rounded-md flex items-center justify-center"
+                        style={{ 
+                          backgroundColor: i === 0 ? 'rgba(97, 218, 251, 0.2)' : 
+                                           i === 1 ? 'rgba(0, 0, 0, 0.2)' : 
+                                                    'rgba(49, 120, 198, 0.2)',
+                          borderColor: i === 0 ? 'rgba(97, 218, 251, 0.3)' : 
+                                       i === 1 ? 'rgba(255, 255, 255, 0.3)' : 
+                                                'rgba(49, 120, 198, 0.3)',
+                          borderWidth: '1px'
+                        }}
+                      >
+                        <span className="text-xs font-bold" style={{ 
+                          color: i === 0 ? '#61DAFB' : 
+                                 i === 1 ? '#FFFFFF' : 
+                                          '#3178C6'
+                        }}>
+                          {tech.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
               </div>
             </motion.div>
           </div>
         </div>
-      </div>
+      </motion.div>
       
-      {/* Scroll indicator */}
+      {/* Animated scroll indicator */}
       <motion.div
         className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-30"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.2, duration: 0.8 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.4, duration: 0.8 }}
       >
         <motion.div
-          animate={{ y: [0, 8, 0] }}
+          animate={{ y: [0, 10, 0] }}
           transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-          className="flex flex-col items-center"
         >
-          <span className="text-white/50 text-sm mb-2">Scroll Down</span>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M7 13L12 18L17 13" stroke="white" strokeOpacity="0.5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="20" cy="20" r="19" stroke="url(#paint0_linear)" strokeWidth="2"/>
+            <path d="M20 12V26M20 26L26 20M20 26L14 20" stroke="url(#paint1_linear)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <defs>
+              <linearGradient id="paint0_linear" x1="20" y1="0" x2="20" y2="40" gradientUnits="userSpaceOnUse">
+                <stop stopColor="#00E5FF"/>
+                <stop offset="1" stopColor="#9945FF"/>
+              </linearGradient>
+              <linearGradient id="paint1_linear" x1="20" y1="12" x2="20" y2="26" gradientUnits="userSpaceOnUse">
+                <stop stopColor="#00E5FF"/>
+                <stop offset="1" stopColor="#9945FF"/>
+              </linearGradient>
+            </defs>
           </svg>
         </motion.div>
       </motion.div>
+      
+      {/* Loading indicator that fades out after content loads */}
+      <AnimatePresence>
+        {!isLoaded && (
+          <motion.div
+            className="absolute inset-0 bg-black z-50 flex items-center justify-center"
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+              className="w-12 h-12 rounded-full border-t-2 border-accent"
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+      
+      {/* Add custom styles for the animated gradient border */}
+      <style jsx global>{`
+        @keyframes spin-slow {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        .animate-spin-slow {
+          animation: spin-slow 10s linear infinite;
+        }
+      `}</style>
     </section>
   );
 } 
