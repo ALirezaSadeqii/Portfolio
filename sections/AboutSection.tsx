@@ -55,7 +55,7 @@ export default function AboutSection() {
             <div className="animated-border glass-bg w-full h-full rounded-2xl p-3">
               <div className="relative w-full h-full rounded-xl overflow-hidden">
                 <Image 
-                  src="/images/profile.jpg" 
+                  src="/images/projects/pic.jpg" 
                   alt="Alireza Sadeghi" 
                   fill
                   className="object-cover"
@@ -120,7 +120,7 @@ export default function AboutSection() {
                 </div>
                 <div>
                   <p className="text-white/50 text-sm">Email</p>
-                  <p className="text-white">alireza.sadeghi@example.com</p>
+                  <p className="text-white">alirezasadeghi2300@gmail.com</p>
                 </div>
               </div>
               

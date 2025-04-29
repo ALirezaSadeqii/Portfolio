@@ -60,7 +60,7 @@ export default function ContactSection() {
     },
     {
       name: 'Email',
-      url: 'mailto:alireza.sadeghi@example.com',
+      url: 'mailto:alirezasadeghi2300@gmail.com',
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
@@ -224,7 +224,7 @@ export default function ContactSection() {
                   <div>
                     <h4 className="text-lg font-medium">{link.name}</h4>
                     <p className="text-white/50 text-sm">
-                      {link.name === 'Email' ? 'alireza.sadeghi@example.com' : `Find me on ${link.name}`}
+                      {link.name === 'Email' ? 'alirezasadeghi2300@gmail.com ' : `Find me on ${link.name}`}
                     </p>
                   </div>
                 </motion.a>

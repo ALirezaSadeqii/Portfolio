@@ -449,58 +449,7 @@ export default function ProjectsScene() {
               transition={{ duration: 0.8, delay: 0.5 }}
               className="relative hidden md:block"
             >
-              <div className="relative aspect-square max-w-md mx-auto">
-                {/* Animated gradient border effect */}
-                <div className="absolute inset-0 rounded-2xl overflow-hidden p-1">
-                  <div className="absolute inset-0 bg-gradient-to-r from-accent via-accent-secondary to-accent-tertiary rounded-2xl animate-spin-slow" />
-                  <div className="absolute inset-0.5 bg-black rounded-2xl backdrop-blur-xl" />
-                </div>
-                
-                {/* Profile image */}
-                <div className="absolute inset-2 rounded-xl overflow-hidden">
-                  <Image 
-                    src="/images/profile.jpg"
-                    alt="Alireza Sadeghi"
-                    fill
-                    className="object-cover"
-                    priority
-                  />
-                </div>
-                
-                {/* Tech stack badges */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 1 }}
-                  className="absolute -bottom-6 -right-6 bg-black/80 backdrop-blur-md border border-white/10 p-3 rounded-lg"
-                >
-                  <div className="flex gap-2">
-                    {['react', 'nextjs', 'typescript'].map((tech, i) => (
-                      <div 
-                        key={tech}
-                        className="w-7 h-7 rounded-md flex items-center justify-center"
-                        style={{ 
-                          backgroundColor: i === 0 ? 'rgba(97, 218, 251, 0.2)' : 
-                                           i === 1 ? 'rgba(0, 0, 0, 0.2)' : 
-                                                    'rgba(49, 120, 198, 0.2)',
-                          borderColor: i === 0 ? 'rgba(97, 218, 251, 0.3)' : 
-                                       i === 1 ? 'rgba(255, 255, 255, 0.3)' : 
-                                                'rgba(49, 120, 198, 0.3)',
-                          borderWidth: '1px'
-                        }}
-                      >
-                        <span className="text-xs font-bold" style={{ 
-                          color: i === 0 ? '#61DAFB' : 
-                                 i === 1 ? '#FFFFFF' : 
-                                          '#3178C6'
-                        }}>
-                          {tech.charAt(0).toUpperCase()}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-              </div>
+              
             </motion.div>
           </div>
         </div>
